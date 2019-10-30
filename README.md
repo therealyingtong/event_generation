@@ -1,11 +1,12 @@
 # event_generation
 
-library to simulate photon generation events from SPDC source on satellite 
+library to simulate photon generation events from SPDC source on satellite.
 
 ## basic distribution
+- SPDC type-0, collinear, non-degenerate phase matching
 - Poissonian
 
-## losses
+## losses (attenuation)
 - dead time of passively quenched detectors (1us)
 - low resolution of time stamp device
 - adjustable in a range from 0 to 40 dB
