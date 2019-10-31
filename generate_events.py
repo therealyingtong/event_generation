@@ -3,7 +3,7 @@
 
 # In[116]:
 
-
+# inter-arrival time is drawn from exponential
 import numpy as np
 s = np.random.exponential(1e-6, size=int(1e6 *1.2 ) )
 
