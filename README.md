@@ -1,8 +1,8 @@
 # event_generation
 
-![](./assets/losses.png)
-
 library to simulate photon generation events from SPDC source on satellite, accounting for the losses and distortions that happen during transmission and detection at the ground station. this experiment uses SPDC type-0, collinear, non-degenerate phase matching.
+
+![](./assets/losses.png)
 
 ## parameters
 
