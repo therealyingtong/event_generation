@@ -35,21 +35,23 @@ library to simulate photon generation events from SPDC source on satellite, acco
 - encode detector clicks in two bits: first bit is basis, second bit is data
 
 ## data generation algorithm
-1. using `g`, generate `events` following a Poissonian distribution. randomly assign each event to a detector, and for each detector randomly assign a measurement result.
-2. create two copies of `events`: `events_Alice` and `events_Bob`
+1. using `g`, generate `events` following a Poissonian distribution. 
+2. create two copies of `events`: `events_Alice` and `events_Bob`. 
 
 ### `events_Alice`
 3. introduce dark counts and stray light (i.e. additional events) in `events_Alice` using `dark_Alice`
-4. for each of Alice's detectors, drop a fraction of events at random according to the detector's efficiency, `eta_i`
-5. for each of Alice's detectors, add a delay according to the detector's skew, `skew_i`
-6. for each of Alice's detectors, remove any event that occurs less than `dead_i` after the previous event
-7. stretch and squeeze `events_Alice` using `drift_Alice` and `drift_rate_Alice`
+4. randomly assign each event to a detector and measurement result
+5. for each of Alice's detectors, drop a fraction of events at random according to the detector's efficiency, `eta_i`
+6. for each of Alice's detectors, add a delay according to the detector's skew, `skew_i`
+7. for each of Alice's detectors, remove any event that occurs less than `dead_i` after the previous event
+8. stretch and squeeze `events_Alice` using `drift_Alice` and `drift_rate_Alice`
 
 ### `events_Bob`
-8. in `events_Bob`, drop a fraction of events at random according to `transmission_loss`
-9. introduce a Doppler shift on `events_Bob` using the TLE and saved pass metadata
-10. introduce dark counts and stray light (i.e. additional events) in `events_Bob` using `dark_Bob`
-11. for each of Bob's detectors, drop a fraction of events at random according to the detector's efficiency, `eta_i`
-12. for each of Bob's detectors, add a delay according to the detector's skew, `skew_i`
-13. for each of Bob's detectors, remove any event that occurs less than `dead_i` after the previous event
-14. stretch and squeeze `events_Bob` using `drift_Bob` and `drift_rate_Bob`
+9. in `events_Bob`, drop a fraction of events at random according to `transmission_loss`
+10. introduce a Doppler shift on `events_Bob` using the TLE and saved pass metadata
+11. introduce dark counts and stray light (i.e. additional events) in `events_Bob` using `dark_Bob`
+12. randomly assign each event to a detector and measurement result
+13. for each of Bob's detectors, drop a fraction of events at random according to the detector's efficiency, `eta_i`
+14. for each of Bob's detectors, add a delay according to the detector's skew, `skew_i`
+15. for each of Bob's detectors, remove any event that occurs less than `dead_i` after the previous event
+16. stretch and squeeze `events_Bob` using `drift_Bob` and `drift_rate_Bob`

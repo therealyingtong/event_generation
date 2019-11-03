@@ -10,46 +10,49 @@ outfile="sim_data/2million.bin"
 
 # 1. create events with Poissonian distribution
 arr_times = np.random.exponential(1/config.gen_rate, size=int(config.duration * config.gen_rate) )
+events = np.cumsum(arr_times)
 
 # 2. create two copies of events for Alice and Bob
-arr_times_Alice = np.copy(arr_times)
-arr_times_Bob = np.copy(arr_times)
+events_Alice = np.copy(events)
+events_Bob = np.copy(events)
 
 # =================================================
 # for events_Alice
 # =================================================
 
-# 3. stretch and squeeze arr_times according to Alice_drift
-                                  
-
-# 4. introduce dark counts and stray light
+# 3. introduce dark counts and stray light
 dark_arr_times = np.random.exponential(1/config.dark_Alice, size=int(config.duration * config.dark_Alice) )
 dark_events = np.cumsum(dark_arr_times)
 events = helper.new_merge(events, dark_events)
 
+# 4. randomly assign each event to a detector and measurement result
 
-# dead_time_condition_Alice = s > config.dead_Alice
-# dead_time_condition_Bob = s > config.dead_Bob
+# 5. drop a fraction of events according to each detector's efficiency
 
-# good_events = np.extract(dead_time_condition,s)
 
-# event_timestamps_s = np.cumsum(good_events)
 
-# q=np.random.randint(0,4,size=len(event_timestamps_s))
+s = np.copy(arr_times)
+dead_time_condition_Alice = s > 1e-9
 
-# p = 2**q
+good_events = np.extract(dead_time_condition_Alice,s)
+event_timestamps_s = np.cumsum(good_events)
 
-# t = event_timestamps_s /0.125e-9
+q=np.random.randint(0,4,size=len(event_timestamps_s))
 
-# t_u64 = t.astype('uint64')
+p = 2**q
 
-# new_data = np.zeros(t_u64.shape,dtype='uint32')
+t = event_timestamps_s /0.125e-9
 
-# t_shifted = t_u64 <<15
+t_u64 = t.astype('uint64')
 
-# t_timestamp_and_event = t_shifted | p.astype('uint64')
+new_data = np.zeros(t_u64.shape,dtype='uint32')
 
-# new_data =np.zeros(shape=(len(t),2)).astype('uint32')
+t_shifted = t_u64 <<15
+
+t_timestamp_and_event = t_shifted | p.astype('uint64')
+
+new_data =np.zeros(shape=(len(t),2)).astype('uint32')
+print(new_data)
 
 # # In[149]:
 
