@@ -4,7 +4,7 @@
 
 gen_rate = 16e6 # event generation rate in counts/second
 duration = 1 # duration of event generation in seconds
-n_detector = 4 # number of detectors for EACH Alice and Bob
+n_detectors = 4 # number of detectors for EACH Alice and Bob
 
 # ================================================
 # DETECTOR CONFIG
@@ -26,10 +26,13 @@ dead_Bob = [1e-9,1e-9,1e-9,1e-9] # detector dead times for Bob in s
 
 tau_res = (1e-9)/8 # timestamp resolution in s
 tau = 2e-9 # coincidence window in s
+
 drift_Alice = 0.1 # Alice average clock drift in s/s
-drift_Bob = 0.1  # Bob average clock drift in s/s
 drift_rate_Alice = 0.01 # Alice average clock drift rate in s/s^2
+
+drift_Bob = 0.1  # Bob average clock drift in s/s
 drift_rate_Bob = 0.01  # Bob average clock drift rate in s/s^2
+
 # ================================================
 # ENVIRONMENT CONFIG
 # ================================================

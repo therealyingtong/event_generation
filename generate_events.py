@@ -5,90 +5,77 @@ import config
 import numpy as np
 from matplotlib import pyplot as plt
 import helper
+import dopplerShift as doppler
+import helper
 
-outfile="sim_data/2million.bin"
+print('0. read satellite orbit info')
+sat, loc, startTime = helper.parseSatellite(config.TLE_path, config.saved_pass_path)
 
-# 1. create events with Poissonian distribution
+print('1. create timestamps with Poissonian distribution')
 arr_times = np.random.exponential(1/config.gen_rate, size=int(config.duration * config.gen_rate) )
-events = np.cumsum(arr_times)
+timestamps = np.cumsum(arr_times)
 
-# 2. create two copies of events for Alice and Bob
-events_Alice = np.copy(events)
-events_Bob = np.copy(events)
+print('2. create two copies of timestamps for Alice and Bob')
+timestamps_Alice = np.copy(timestamps)
+timestamps_Bob = np.copy(timestamps)
 
 # =================================================
-# for events_Alice
+# Alice
 # =================================================
 
-# 3. introduce dark counts and stray light
-dark_arr_times = np.random.exponential(1/config.dark_Alice, size=int(config.duration * config.dark_Alice) )
-dark_events = np.cumsum(dark_arr_times)
-events = helper.new_merge(events, dark_events)
+print('3. introduce dark counts and stray light')
+dark_arr_times_Alice = np.random.exponential(1/config.dark_Alice, size=int(config.duration * config.dark_Alice) )
+dark_events_Alice = np.cumsum(dark_arr_times_Alice)
+timestamps_Alice = helper.new_merge(timestamps_Alice, dark_events_Alice)
 
-# 4. randomly assign each event to a detector and measurement result
+print('4. randomly assign randomly assign each event in `timestamps_Alice` to a detector, to form `pattern_Alice`')
+patterns_Alice = np.random.randint(0, config.n_detectors, size=len(timestamps_Alice))
 
-# 5. drop a fraction of events according to each detector's efficiency
+print('5. drop a fraction of events according to each detector efficiency')
 
+detected_indices = []
+for i in range(len(config.eta_Alice)):
+	p_drop = config.eta_Alice[i]
+	# indices = np.where(patterns_Alice == i)
+	indices = np.where(patterns_Alice == i)[0]
+	dropped_indices = np.random.choice(len(indices), int(p_drop*len(indices)), replace=False)
+	remaining_indices = np.delete(indices, dropped_indices)
+	detected_indices = detected_indices + remaining_indices.tolist()
 
+timestamps_Alice = np.take(timestamps_Alice, detected_indices)
+patterns_Alice = np.take(patterns_Alice, detected_indices)
 
-s = np.copy(arr_times)
-dead_time_condition_Alice = s > 1e-9
+print('6. add a delay according to each detector skew')
+for i in range(len(patterns_Alice)):
+	skew = config.skew_Alice[patterns_Alice[i]]
+	timestamps_Alice[i] = timestamps_Alice[i] + skew
 
-good_events = np.extract(dead_time_condition_Alice,s)
-event_timestamps_s = np.cumsum(good_events)
+print('7. for each detector, remove any timestamp that occurs less than dead_i after the previous event')
+for i in range(1, len(patterns_Alice)):
+	dead = config.dead_Alice[patterns_Alice[i]]
+	if (
+		patterns_Alice[i] == patterns_Alice[i - 1] and timestamps_Alice[i] <= timestamps_Alice[i - 1] + dead):
+		np.delete(patterns_Alice, i)
+		np.delete(timestamps_Alice, i)
 
-q=np.random.randint(0,4,size=len(event_timestamps_s))
+print('8. stretch and squeeze using drift_Alice and drift_rate_Alice')
+for i in range(len(timestamps_Alice)):
+	t = timestamps_Alice[i]
+	t_stretched = t*config.drift_Alice + t*t*config.drift_rate_Alice
+	timestamps_Alice[i] = t_stretched
 
-p = 2**q
+# =================================================
+# Bob
+# =================================================
 
-t = event_timestamps_s /0.125e-9
+print('9. drop a fraction of events in timestamps_Bob according to transmission_loss')
 
-t_u64 = t.astype('uint64')
-
-new_data = np.zeros(t_u64.shape,dtype='uint32')
-
-t_shifted = t_u64 <<15
-
-t_timestamp_and_event = t_shifted | p.astype('uint64')
-
-new_data =np.zeros(shape=(len(t),2)).astype('uint32')
-print(new_data)
-
-# # In[149]:
-
-# new_data[:,0] = t_timestamp_and_event >> 32
-
-# # In[150]:
-
-# new_data[:,1] = t_timestamp_and_event.astype('uint32') 
-
-# # In[151]:
-
-# new_data.astype('uint32').tofile(outfile)
-
-# print("number of events generated: ", len(event_timestamps_s) )
-# print("duration: ", event_timestamps_s[-1], " seconds")
-
-# def _data_extractor(filename):
-#     """Reads raw timestamp into time and patterns vectors
-
-#     :param filename: a python file object open in binary mode
-#     :type filename: _io.BufferedReader
-#     :returns: Two vectors: timestamps, corresponding pattern
-#     :rtype: {numpy.ndarray(float), numpy.ndarray(uint32)}
-#     """
-#     with open(filename, 'rb') as f:
-#         data = np.fromfile(file=f, dtype='<u4').reshape(-1, 2)
-#         # cast to uint64!!!
-#         t = ((np.uint64(data[:, 0]) << 17) + (data[:, 1] >> 15))# / 8. # time in nanoseconds. 
-#         #t = ((np.uint64(data[:, 0]) << 17) + (data[:, 1] >> 15)) 
-#         p = data[:, 1] & 0xf
-#         return t, p
+p_loss = config.transmission_loss
+lost_indices = np.random.choice(len(timestamps_Bob), int(p_drop*len(timestamps_Bob)), replace=False)
+timestamps_Bob = np.delete(timestamps_Bob, lost_indices)
 
 
-# # In[157]:
-
-# #tt,pp = _data_extractor("sim_data/1million.bin")
-
-
-
+print('10. introduce a Doppler shift on timestamps_Bob using the TLE and saved pass metadata')
+delay_list, df_list = doppler.calcDoppler(
+	sat, loc, startTime, timestamps_Bob, 1
+)
