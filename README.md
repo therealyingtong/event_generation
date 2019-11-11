@@ -5,6 +5,7 @@ library to simulate photon generation events from SPDC source on satellite, acco
 ![](./assets/losses.png)
 
 TODO: eavesdropping
+TODO: dead time intrinsic to time tagger
 
 ## parameters
 

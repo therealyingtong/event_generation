@@ -36,9 +36,9 @@ drift_rate_Bob = 0.01  # Bob average clock drift rate in s/s^2
 # ================================================
 # ENVIRONMENT CONFIG
 # ================================================
-transmission_loss = 40 # transmission loss in dB
-dark_Alice = 10 # dark count rates for Alice in counts/s
-dark_Bob = 10 # dark count rates for Bob in counts/s
+transmission_loss = 30 # transmission loss in dB
+dark_Alice = 3000 # dark count rates for Alice in counts/s
+dark_Bob = 3000 # dark count rates for Bob in counts/s
 
 # ================================================
 # METADATA
