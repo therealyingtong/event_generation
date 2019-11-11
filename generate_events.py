@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import helper
 import dopplerShift as doppler
-import helper
+import detector
 import datetime
 
 print('0. read satellite orbit info')
@@ -31,31 +31,27 @@ timestamps_Alice = helper.new_merge(timestamps_Alice, dark_events_Alice)
 
 print('4. randomly assign randomly assign each event in `timestamps_Alice` to a detector, to form `pattern_Alice`')
 patterns_Alice = np.random.randint(0, config.n_detectors, size=len(timestamps_Alice))
+events_alice = list(zip(timestamps_Alice, patterns_Alice))
 
 print('5. drop a fraction of events according to each detector efficiency')
 
-detected_indices = []
-for i in range(len(config.eta_Alice)):
-	p_drop = config.eta_Alice[i]
-	# indices = np.where(patterns_Alice == i)
-	indices = np.where(patterns_Alice == i)[0]
-	dropped_indices = np.random.choice(len(indices), int(p_drop*len(indices)), replace=False)
-	remaining_indices = np.delete(indices, dropped_indices)
-	detected_indices = detected_indices + remaining_indices.tolist()
-
-timestamps_Alice = np.take(timestamps_Alice, detected_indices)
-patterns_Alice = np.take(patterns_Alice, detected_indices)
+events_alice = detector.efficiency(
+	config.eta_Alice, events_alice
+)
 
 print('6. add a delay according to each detector skew')
-for i in range(len(patterns_Alice)):
-	skew = config.skew_Alice[patterns_Alice[i]]
-	timestamps_Alice[i] = timestamps_Alice[i] + skew
+events_alice = detector.skew(
+	config.skew_Alice, events_alice
+)
 
 print('7. for each detector, remove any timestamp that occurs less than dead_i after the previous event')
 print(datetime.datetime.now())
+dead_indices = []
 for i in range(1, len(patterns_Alice)):
 	dead = config.dead_Alice[patterns_Alice[i]]
-	if (patterns_Alice[i] == patterns_Alice[i - 1] and timestamps_Alice[i] <= timestamps_Alice[i - 1] + dead):
+	if (
+		patterns_Alice[i] == patterns_Alice[i - 1] and 
+		timestamps_Alice[i] <= timestamps_Alice[i - 1] + dead):
 		np.delete(patterns_Alice, i)
 		np.delete(timestamps_Alice, i)
 print(datetime.datetime.now())
