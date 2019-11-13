@@ -2,7 +2,7 @@
 # SOURCE CONFIG
 # ================================================
 
-gen_rate = 16e6 # event generation rate in counts/second
+gen_rate = 5e6 # event generation rate in counts/second
 duration = 1 # duration of event generation in seconds
 n_detectors = 4 # number of detectors for EACH Alice and Bob
 

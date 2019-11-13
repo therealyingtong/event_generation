@@ -31,40 +31,49 @@ del patterns_Alice
 
 print('3. create a copy of events_Alice for Bob')
 events_Bob = events_Alice.copy()
+print('len(events_Alice)', len(events_Alice))
 
 # =================================================
 # Alice
 # =================================================
 
-print('4. introduce dark counts and stray light for Alice')
+print('4. introduce dark counts and stray light (i.e. additional events) in `events_Alice` using `dark_Alice`')
 events_Alice = environment.dark_count(config.dark_Alice, config.n_detectors, config.duration, events_Alice)
+print('len(events_Alice)', len(events_Alice))
 
 print('5. drop a fraction of events according to each detector efficiency')
 events_Alice = detector.efficiency(
 	config.eta_Alice, events_Alice
 )
+print('len(events_Alice)', len(events_Alice))
 
 print('6. add a delay according to each detector skew')
 events_Alice = detector.skew(
 	config.skew_Alice, events_Alice
 )
+print('len(events_Alice)', len(events_Alice))
 
 print('7. for each detector, remove any timestamp that occurs less than dead_i after the previous event')
-dead_indices = []
 events_Alice = detector.dead(
 	config.dead_Alice, events_Alice
 )
+print('len(events_Alice)', len(events_Alice))
 
 print('8. stretch and squeeze using drift_Alice and drift_rate_Alice')
-for i in range(len(events_Alice)):
-	t = events_Alice[i][0]
+timestamps_Alice = [event[0] for event in events_Alice]
+patterns_Alice = [event[1] for event in events_Alice]
+del events_Alice
+for i in range(len(timestamps_Alice)):
+	t = patterns_Alice[i]
 	t_stretched = t*config.drift_Alice + t*t*config.drift_rate_Alice
-	events_Alice[i][0] = t_stretched
+	patterns_Alice[i] = t_stretched
 
 print('======== write events_Alice to outfile ========')
+print('len(timestamps_Alice), len(patterns_Alice)', len(timestamps_Alice), len(patterns_Alice))
 outfile_Alice ="./data/alice" + time + ".bin"
-helper.write(config.tau_res, outfile_Alice, events_Alice)
-del events_Alice
+helper.write(config.tau_res, outfile_Alice, list(zip(timestamps_Alice, patterns_Alice)))
+del timestamps_Alice
+del patterns_Alice
 
 # =================================================
 # Bob
@@ -122,13 +131,16 @@ events_Bob = detector.dead(
 )
 
 print('16. stretch and squeeze using drift_Bob and drift_rate_Bob')
-for i in range(len(events_Bob)):
-	t = events_Bob[i][0]
+timestamps_Bob = [event[0] for event in events_Bob]
+patterns_Bob = [event[1] for event in events_Bob]
+del events_Bob
+for i in range(len(timestamps_Bob)):
+	t = patterns_Bob[i]
 	t_stretched = t*config.drift_Bob + t*t*config.drift_rate_Bob
-	events_Bob[i][0] = t_stretched
-
+	patterns_Bob[i] = t_stretched
 
 print('========== write events_Bob to outfiles ==========')
+print('len(timestamps_Bob), len(patterns_Bob)', len(timestamps_Bob), len(patterns_Bob))
 outfile_Bob ="./data/bob" + time + ".bin"
-helper.write(config.tau_res, outfile_Bob, events_Bob)
+helper.write(config.tau_res, outfile_Bob, list(zip(timestamps_Bob, patterns_Bob)))
 

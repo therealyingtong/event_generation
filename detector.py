@@ -5,17 +5,14 @@ def efficiency(eta_array, events_array):
 	patterns_array = [event[1] for event in events_array]
 	del events_array
 
-	detected_indices = []
+	dropped_indices = []
 	for i in range(len(eta_array)):
 		p_drop = eta_array[i]
-		# indices = np.where(patterns_Alice == i)
-		indices = np.where(patterns_array == i)[0]
-		dropped_indices = np.random.choice(len(indices), int(p_drop*len(indices)), replace=False)
-		remaining_indices = np.delete(indices, dropped_indices)
-		detected_indices = detected_indices + remaining_indices.tolist()
+		indices = np.where(np.asarray(patterns_array) == i)
+		dropped_indices = dropped_indices + np.random.choice(len(indices), int(p_drop*len(indices)), replace=False).tolist()
 
-	timestamps_array = np.take(timestamps_array, detected_indices)
-	patterns_array = np.take(patterns_array, detected_indices)
+	timestamps_array = np.delete(timestamps_array, dropped_indices)
+	patterns_array = np.delete(patterns_array, dropped_indices)
 
 	return list(zip(timestamps_array, patterns_array))
 
