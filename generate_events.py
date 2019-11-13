@@ -128,7 +128,7 @@ for i in range(len(events_Bob)):
 	events_Bob[i][0] = t_stretched
 
 
-print('17. write events_Bob to outfiles')
+print('========== write events_Bob to outfiles ==========')
 outfile_Bob ="./data/bob" + time + ".bin"
 helper.write(config.tau_res, outfile_Bob, events_Bob)
 

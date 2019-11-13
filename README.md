@@ -44,23 +44,24 @@ TODO: clock res, coincidence window
 	- e.g. when `n_detector = 4`, we have `0,1` representing `|H>,|V>` in the HV basis, and `2,3` representing `|A>,|D>` in the AD basis.
 
 ## data generation algorithm
-1. using `g`, generate `timestamps` following a Poissonian distribution. 
-2. make two copies of `timestamps`, `timestamps_Alice` and `timestamps_Bob`.
+1. create `timestamps_Alice` with Poissonian distribution for Alice
+2. randomly assign randomly assign each event in `timestamps_Alice` to a detector, to form `patterns_Alice`. zip these two datasets to form `events_Alice`
+3. create a copy of `events_Alice` for Bob
 
 ### `Alice`
-3. introduce dark counts and stray light (i.e. additional events) in `timestamps_Alice` using `dark_Alice`
-4. randomly assign each event in `timestamps_Alice` to a detector, to form `pattern_Alice`
-5. for each of Alice's detectors, drop a fraction of events at random according to the detector's efficiency, `eta_i`
-6. for each of Alice's detectors, add a delay according to the detector's skew, `skew_i`
+4. introduce dark counts and stray light (i.e. additional events) in `events_Alice` using `dark_Alice`
+5. drop a fraction of `events_Alice` according to each detector's efficiency
+6. add a delay in `events_Alice` according to each detector skew
 7. for each of Alice's detectors, remove any event that occurs less than `dead_i` after the previous event
-8. stretch and squeeze `timestamps_Alice` using `drift_Alice` and `drift_rate_Alice`
+8. stretch and squeeze `events_Bob` using `drift_Alice` and `drift_rate_Alice`
+
 
 ### `Bob`
-9. in `timestamps_Bob`, drop a fraction of events at random according to `transmission_loss`
-10. introduce a Doppler shift on `timestamps_Bob` using the TLE and saved pass metadata
-11. introduce dark counts and stray light (i.e. additional events) in `timestamps_Bob` using `dark_Bob`
-12. randomly assign each event in `timestamps_Bob` to a detector, to form `pattern_Bob`
-13. for each of Bob's detectors, drop a fraction of events at random according to the detector's efficiency, `eta_i`
-14. for each of Bob's detectors, add a delay according to the detector's skew, `skew_i`
+9. drop a fraction of events in events_Bob according to transmission_loss
+10. introduce a Doppler shift on timestamps_Bob using the TLE and saved pass metadata
+11. randomly select same or different bases for Bob, and assign detectors
+12. introduce dark counts and stray light (i.e. additional events) in `timestamps_Bob` using `dark_Bob`
+13. drop a fraction of events according to each detector efficiency
+14. add a delay according to each detector skew
 15. for each of Bob's detectors, remove any event that occurs less than `dead_i` after the previous event
 16. stretch and squeeze `events_Bob` using `drift_Bob` and `drift_rate_Bob`
