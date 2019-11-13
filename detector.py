@@ -8,8 +8,9 @@ def efficiency(eta_array, events_array):
 	dropped_indices = []
 	for i in range(len(eta_array)):
 		p_drop = eta_array[i]
-		indices = np.where(np.asarray(patterns_array) == i)
-		dropped_indices = dropped_indices + np.random.choice(len(indices), int(p_drop*len(indices)), replace=False).tolist()
+		indices = np.where(np.asarray(patterns_array) == i)[0]
+		dropped_indices_indices = np.random.choice(len(indices), size = int(p_drop*len(indices)), replace=False).tolist()
+		dropped_indices = dropped_indices + np.asarray(indices).take(dropped_indices_indices).tolist()
 
 	timestamps_array = np.delete(timestamps_array, dropped_indices)
 	patterns_array = np.delete(patterns_array, dropped_indices)
@@ -40,7 +41,7 @@ def dead(dead_array, events_array):
 			timestamps_array[i] <= timestamps_array[i - 1] + dead):
 			dead_indices.append(i)
 
-	np.delete(timestamps_array, dead_indices)
-	np.delete(patterns_array, dead_indices)
+	timestamps_array = np.delete(timestamps_array, dead_indices)
+	patterns_array = np.delete(patterns_array, dead_indices)
 
 	return list(zip(timestamps_array, patterns_array))
