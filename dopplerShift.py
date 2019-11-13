@@ -18,8 +18,6 @@ def calcDoppler(sat, loc, startTime, timeStamp, units):
 
 		s_list.append(sat.range)
 
-	delay_list = []
-
 	delay_list = [s / (constants.c*units) for s in s_list]
 
 	return delay_list

@@ -13,12 +13,12 @@ n_detectors = 4 # number of detectors for EACH Alice and Bob
 # Alice
 eta_Alice = [0.25,0.25,0.25,0.25] # detector efficiencies for Alice
 skew_Alice = [0,0,0,0] # detector skews for Alice in s
-dead_Alice = [1e-9,1e-9,1e-9,1e-9] # detector dead times for Alice in s
+dead_Alice = [100e-9,100e-9,100e-9,100e-9] # detector dead times for Alice in s
 
 # Bob
 eta_Bob = [0.25,0.25,0.25,0.25] # detector efficiencies for Bob
 skew_Bob = [0,0,0,0] # detector skews for Bob in s
-dead_Bob = [1e-9,1e-9,1e-9,1e-9] # detector dead times for Bob in s
+dead_Bob = [100e-9,100e-9,100e-9,100e-9] # detector dead times for Bob in s
 
 # ================================================
 # CLOCK CONFIG
