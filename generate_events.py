@@ -11,33 +11,37 @@ import helper
 import dopplerShift as doppler
 import detector
 import datetime
+from operator import add 
 
 print('0. read satellite orbit info')
 sat, loc, startTime = helper.parseSatellite(config.TLE_path, config.saved_pass_path)
 
-print('1. create timestamps with Poissonian distribution')
+print('1. create timestamps with Poissonian distribution for Alice')
 arr_times = np.random.exponential(1/config.gen_rate, size = int(config.duration * config.gen_rate) )
-timestamps = np.cumsum(arr_times)
+timestamps_Alice = np.cumsum(arr_times)
 
-print('2. create two copies of timestamps for Alice and Bob')
-timestamps_Alice = np.copy(timestamps)
-timestamps_Bob = np.copy(timestamps)
-del timestamps
+print('2. randomly assign randomly assign each event in `timestamps_Alice` to a detector, to form `pattern_Alice`')
+patterns_Alice = np.random.randint(0, config.n_detectors, size=len(timestamps_Alice))
+events_Alice = list(zip(timestamps_Alice, patterns_Alice))
+del timestamps_Alice
+del patterns_Alice
+
+print('3. create a copy of events_Alice for Bob')
+events_Bob = events_Alice.copy()
 
 # =================================================
 # Alice
 # =================================================
 
-print('3. introduce dark counts and stray light')
+print('4. introduce dark counts and stray light for Alice')
 dark_arr_times_Alice = np.random.exponential(1/config.dark_Alice, size = int(config.duration * config.dark_Alice) )
-dark_events_Alice = np.cumsum(dark_arr_times_Alice)
-timestamps_Alice = helper.new_merge(timestamps_Alice, dark_events_Alice)
+dark_timestamps_Alice = np.cumsum(dark_arr_times_Alice)
+dark_patterns_Alice = np.random.randint(0, config.n_detectors, size=len(dark_timestamps_Alice))
+dark_events_Alice = list(zip(dark_timestamps_Alice, dark_patterns_Alice))
+del dark_timestamps_Alice
+del dark_patterns_Alice
 
-print('4. randomly assign randomly assign each event in `timestamps_Alice` to a detector, to form `pattern_Alice`')
-patterns_Alice = np.random.randint(0, config.n_detectors, size=len(timestamps_Alice))
-events_Alice = list(zip(timestamps_Alice, patterns_Alice))
-del timestamps_Alice
-del patterns_Alice
+events_Alice = sorted((events_Alice + dark_events_Alice), key = lambda tup: tup[0])
 
 print('5. drop a fraction of events according to each detector efficiency')
 events_Alice = detector.efficiency(
@@ -65,27 +69,48 @@ for i in range(len(events_Alice)):
 # Bob
 # =================================================
 
-print('9. drop a fraction of events in timestamps_Bob according to transmission_loss')
+print('9. drop a fraction of events in events_Bob according to transmission_loss')
 p_loss = 1 / (10**(config.transmission_loss/10))
-lost_indices = np.random.choice(len(timestamps_Bob), int(p_loss*len(timestamps_Bob)), replace=False)
-timestamps_Bob = np.delete(timestamps_Bob, lost_indices)
+lost_indices = np.random.choice(len(events_Bob), int(p_loss*len(events_Bob)), replace=False)
+timestamps_Bob = [event[0] for event in events_Bob]
+patterns_Bob = [event[1] for event in events_Bob]
+del events_Bob
+np.delete(timestamps_Bob, lost_indices)
+np.delete(patterns_Bob, lost_indices)
 
 print('10. introduce a Doppler shift on timestamps_Bob using the TLE and saved pass metadata')
-delay_list, df_list = doppler.calcDoppler(
+
+delay_list = doppler.calcDoppler(
 	sat, loc, startTime, timestamps_Bob, 1
 )
-timestamps_Bob = timestamps_Bob + np.array(delay_list) 
+timestamps_Bob = [sum(x) for x in zip(timestamps_Bob, delay_list)]
 
-print ('11. introduce dark counts and stray light (i.e. additional events) in `timestamps_Bob` using `dark_Bob`')
-dark_arr_times_Bob = np.random.exponential(1/config.dark_Bob, size=int(config.duration * config.dark_Bob) )
-dark_events_Bob = np.cumsum(dark_arr_times_Bob)
-timestamps_Bob = helper.new_merge(timestamps_Bob, dark_events_Bob)
+print('11. randomly select same or different bases for Bob, and assign detectors')
 
-print('12. randomly assign each event in `timestamps_Bob` to a detector, to form `pattern_Bob`')
-patterns_Bob = np.random.randint(0, config.n_detectors, size=len(timestamps_Bob))
+# indices with different bases (half of them)
+diff_indices = 	np.random.choice(len(patterns_Bob), int(0.5*len(patterns_Bob)), replace=False)
+diff_0_indices_indices = np.random.choice(len(diff_indices), int(0.5*len(diff_indices)), replace=False)
+diff_0_indices = np.take(diff_indices, diff_0_indices_indices)
+diff_1_indices = np.delete(diff_indices, diff_0_indices_indices)
+
+for i in range(len(diff_0_indices)):
+	patterns_Bob[i] = (bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 
+for i in range(len(diff_1_indices)):
+	patterns_Bob[i] = (bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 + 1
+
 events_Bob = list(zip(timestamps_Bob, patterns_Bob))
-del timestamps_Bob
-del patterns_Bob
+
+
+print ('12. introduce dark counts and stray light (i.e. additional events) in `timestamps_Bob` using `dark_Bob`')
+dark_arr_times_Bob = np.random.exponential(1/config.dark_Bob, size=int(config.duration * config.dark_Bob) )
+dark_timestamps_Bob = np.cumsum(dark_arr_times_Bob)
+dark_patterns_Bob = np.random.randint(0, config.n_detectors, size=len(dark_timestamps_Bob))
+dark_events_Bob = list(zip(dark_timestamps_Bob, dark_patterns_Bob))
+del dark_timestamps_Bob
+del dark_patterns_Bob
+
+events_Bob = sorted((events_Bob + dark_events_Bob), key = lambda tup: tup[0])
+
 
 print('13. drop a fraction of events according to each detector efficiency')
 events_Bob = detector.efficiency(

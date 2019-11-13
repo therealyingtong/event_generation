@@ -1,0 +1,76 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+TLE_path	../config.py	/^TLE_path = ".\/data\/GALASSIA-TLE.txt"$/;"	kind:variable	line:46
+_data_extractor	../generate_events_ref.py	/^def _data_extractor(filename):$/;"	kind:function	line:90
+arr_times	../generate_events.py	/^arr_times = np.random.exponential(1\/config.gen_rate, size = int(config.duration * config.gen_rate) )$/;"	kind:variable	line:19
+calcDoppler	../dopplerShift.py	/^def calcDoppler(sat, loc, startTime, timeStamp, units):$/;"	kind:function	line:7
+clockDriftShift	../dopplerShift.py	/^def clockDriftShift(timeStamp, df_list, clockDrift):$/;"	kind:function	line:51
+config.py	../config.py	1;"	kind:file	line:1
+dark_Alice	../config.py	/^dark_Alice = 3000 # dark count rates for Alice in counts\/s$/;"	kind:variable	line:40
+dark_Bob	../config.py	/^dark_Bob = 3000 # dark count rates for Bob in counts\/s$/;"	kind:variable	line:41
+dark_arr_times_Alice	../generate_events.py	/^dark_arr_times_Alice = np.random.exponential(1\/config.dark_Alice, size = int(config.duration * config.dark_Alice) )$/;"	kind:variable	line:36
+dark_events_Alice	../generate_events.py	/^dark_events_Alice = list(zip(dark_timestamps_Alice, dark_patterns_Alice))$/;"	kind:variable	line:39
+dark_patterns_Alice	../generate_events.py	/^dark_patterns_Alice = np.random.randint(0, config.n_detectors, size=len(dark_timestamps_Alice))$/;"	kind:variable	line:38
+dark_timestamps_Alice	../generate_events.py	/^dark_timestamps_Alice = np.cumsum(dark_arr_times_Alice)$/;"	kind:variable	line:37
+dead	../detector.py	/^def dead(dead_array, events_array):$/;"	kind:function	line:33
+dead_Alice	../config.py	/^dead_Alice = [1e-9,1e-9,1e-9,1e-9] # detector dead times for Alice in s$/;"	kind:variable	line:16
+dead_Bob	../config.py	/^dead_Bob = [1e-9,1e-9,1e-9,1e-9] # detector dead times for Bob in s$/;"	kind:variable	line:21
+dead_indices	../generate_events.py	/^dead_indices = []$/;"	kind:variable	line:57
+dead_time_condition	../generate_events_ref.py	/^dead_time_condition = s>dead_time_s$/;"	kind:variable	line:16
+dead_time_s	../generate_events_ref.py	/^dead_time_s = 150e-9$/;"	kind:variable	line:12
+detector.py	../detector.py	1;"	kind:file	line:1
+dopplerShift.py	../dopplerShift.py	1;"	kind:file	line:1
+drift_Alice	../config.py	/^drift_Alice = 0.1 # Alice average clock drift in s\/s$/;"	kind:variable	line:30
+drift_Bob	../config.py	/^drift_Bob = 0.1  # Bob average clock drift in s\/s$/;"	kind:variable	line:33
+drift_rate_Alice	../config.py	/^drift_rate_Alice = 0.01 # Alice average clock drift rate in s\/s^2$/;"	kind:variable	line:31
+drift_rate_Bob	../config.py	/^drift_rate_Bob = 0.01  # Bob average clock drift rate in s\/s^2$/;"	kind:variable	line:34
+duration	../config.py	/^duration = 1 # duration of event generation in seconds$/;"	kind:variable	line:6
+efficiency	../detector.py	/^def efficiency(eta_array, events_array):$/;"	kind:function	line:3
+eta_Alice	../config.py	/^eta_Alice = [0.25,0.25,0.25,0.25] # detector efficiencies for Alice$/;"	kind:variable	line:14
+eta_Bob	../config.py	/^eta_Bob = [0.25,0.25,0.25,0.25] # detector efficiencies for Bob$/;"	kind:variable	line:19
+event_timestamps_s	../generate_events_ref.py	/^event_timestamps_s = np.cumsum(good_events)$/;"	kind:variable	line:25
+events_Alice	../generate_events.py	/^events_Alice = detector.dead($/;"	kind:variable	line:58
+events_Alice	../generate_events.py	/^events_Alice = detector.efficiency($/;"	kind:variable	line:47
+events_Alice	../generate_events.py	/^events_Alice = detector.skew($/;"	kind:variable	line:52
+events_Alice	../generate_events.py	/^events_Alice = list(zip(timestamps_Alice, patterns_Alice))$/;"	kind:variable	line:24
+events_Alice	../generate_events.py	/^events_Alice = sorted((events_Alice + dark_events_Alice), key = lambda tup: tup[0])$/;"	kind:variable	line:43
+events_Bob	../generate_events.py	/^events_Bob = events_Alice.copy()$/;"	kind:variable	line:29
+events_Bob	../generate_events.py	/^events_Bob = np.delete(events_Bob, lost_indices)$/;"	kind:variable	line:75
+gen_rate	../config.py	/^gen_rate = 16e6 # event generation rate in counts\/second$/;"	kind:variable	line:5
+generate_events.py	../generate_events.py	1;"	kind:file	line:1
+generate_events_ref.py	../generate_events_ref.py	1;"	kind:file	line:1
+good_events	../generate_events_ref.py	/^good_events = np.extract(dead_time_condition,s)$/;"	kind:variable	line:22
+helper.py	../helper.py	1;"	kind:file	line:1
+lost_indices	../generate_events.py	/^lost_indices = np.random.choice(len(events_Bob), int(p_loss*len(events_Bob)), replace=False)$/;"	kind:variable	line:74
+n_detectors	../config.py	/^n_detectors = 4 # number of detectors for EACH Alice and Bob$/;"	kind:variable	line:7
+new_data	../generate_events_ref.py	/^new_data = np.zeros(t_u64.shape,dtype='uint32')$/;"	kind:variable	line:48
+new_data	../generate_events_ref.py	/^new_data =np.zeros(shape=(len(t),2)).astype('uint32')$/;"	kind:variable	line:66
+new_merge	../helper.py	/^def new_merge(a, b):$/;"	kind:function	line:25
+outfile	../generate_events_ref.py	/^outfile="sim_data\/2million.bin"$/;"	kind:variable	line:10
+p	../generate_events_ref.py	/^p = 2**q$/;"	kind:variable	line:33
+p_loss	../generate_events.py	/^p_loss = 1 \/ (10**(config.transmission_loss\/10))$/;"	kind:variable	line:73
+parseSatellite	../helper.py	/^def parseSatellite(filenameTLE, filenameSavedPass):$/;"	kind:function	line:4
+patterns_Alice	../generate_events.py	/^patterns_Alice = np.random.randint(0, config.n_detectors, size=len(timestamps_Alice))$/;"	kind:variable	line:23
+plotDoppler	../dopplerShift.py	/^def plotDoppler(timeStamp, df_list, delay_list):$/;"	kind:function	line:63
+propagationDelay	../dopplerShift.py	/^def propagationDelay(timeStamp, delay_list):$/;"	kind:function	line:41
+q	../generate_events_ref.py	/^q=np.random.randint(0,4,size=len(event_timestamps_s))$/;"	kind:variable	line:28
+s	../generate_events_ref.py	/^s = np.random.exponential(1e-6, size=int(1e6 *1.2 ) )$/;"	kind:variable	line:8
+saved_pass_path	../config.py	/^saved_pass_path = ".\/data\/GALASSIA-15723-pass-48.txt"/;"	kind:variable	line:47
+skew	../detector.py	/^def skew(skew_array, events_array):$/;"	kind:function	line:22
+skew_Alice	../config.py	/^skew_Alice = [0,0,0,0] # detector skews for Alice in s$/;"	kind:variable	line:15
+skew_Bob	../config.py	/^skew_Bob = [0,0,0,0] # detector skews for Bob in s$/;"	kind:variable	line:20
+t	../generate_events.py	/^	t = events_Alice[i][0]$/;"	kind:variable	line:64
+t	../generate_events_ref.py	/^t = event_timestamps_s \/0.125e-9$/;"	kind:variable	line:38
+t_shifted	../generate_events_ref.py	/^t_shifted = t_u64 <<15$/;"	kind:variable	line:55
+t_stretched	../generate_events.py	/^	t_stretched = t*config.drift_Alice + t*t*config.drift_rate_Alice$/;"	kind:variable	line:65
+t_timestamp_and_event	../generate_events_ref.py	/^t_timestamp_and_event = t_shifted | p.astype('uint64')$/;"	kind:variable	line:61
+t_u64	../generate_events_ref.py	/^t_u64 = t.astype('uint64')$/;"	kind:variable	line:44
+tau	../config.py	/^tau = 2e-9 # coincidence window in s$/;"	kind:variable	line:28
+tau_res	../config.py	/^tau_res = (1e-9)\/8 # timestamp resolution in s$/;"	kind:variable	line:27
+timestamps_Alice	../generate_events.py	/^timestamps_Alice = np.cumsum(arr_times)$/;"	kind:variable	line:20
+timestamps_Bob	../generate_events.py	/^timestamps_Bob = timestamps_Bob + np.array(delay_list) $/;"	kind:variable	line:81
+transmission_loss	../config.py	/^transmission_loss = 30 # transmission loss in dB$/;"	kind:variable	line:39

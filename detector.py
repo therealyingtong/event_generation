@@ -43,7 +43,7 @@ def dead(dead_array, events_array):
 			timestamps_array[i] <= timestamps_array[i - 1] + dead):
 			dead_indices.append(i)
 
-	timestamps_array = [i for j, i in enumerate(timestamps_array) if j not in dead_indices]
-	patterns_array = [i for j, i in enumerate(patterns_array) if j not in dead_indices]
+	np.delete(timestamps_array, dead_indices)
+	np.delete(patterns_array, dead_indices)
 
 	return list(zip(timestamps_array, patterns_array))

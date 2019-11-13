@@ -9,8 +9,6 @@ def calcDoppler(sat, loc, startTime, timeStamp, units):
 	print("calculating Doppler shift")
 
 	s_list = [] # range (range = distance from observer to satellite)
-	v_list = [] # range rate of change 
-	t_list = [] # time
 
 	for stamp in timeStamp:
 		d_time = ephem.Date(startTime + (ephem.second * stamp * units))
@@ -19,24 +17,12 @@ def calcDoppler(sat, loc, startTime, timeStamp, units):
 		sat.compute(loc)
 
 		s_list.append(sat.range)
-		v_list.append(sat.range_velocity)
-		t_list.append(d_time)		
 
-	df_list = []
 	delay_list = []
 
-	for s in s_list:
-		delay = s / constants.c
-		delay_list.append(delay)
-		
-	for v in v_list:
-		df = - v / constants.c
-		df_list.append(df)
+	delay_list = [s / (constants.c*units) for s in s_list]
 
-	delay_list = [delay / units for delay in delay_list]
-	df_list = [df * 10 for df in df_list]
-
-	return delay_list, df_list
+	return delay_list
 
 def propagationDelay(timeStamp, delay_list):
 
