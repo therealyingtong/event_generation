@@ -1,19 +1,24 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# garbage collector for unused variables
 import gc
 gc.collect()
 
-import config
+# python libraries
 import numpy as np
 from matplotlib import pyplot as plt
+import time
+from operator import add 
+
+# modules in this project
+import config
 import helper
 import dopplerShift as doppler
 import detector
-import time
-from operator import add 
 import environment
 
+# mark current time for unique naming of outfiles
 time = str(int(time.time()))
 
 print('0. read satellite orbit info')
@@ -64,14 +69,15 @@ timestamps_Alice = [event[0] for event in events_Alice]
 patterns_Alice = [event[1] for event in events_Alice]
 del events_Alice
 for i in range(len(timestamps_Alice)):
-	t = patterns_Alice[i]
+	t = timestamps_Alice[i]
 	t_stretched = t*config.drift_Alice + t*t*config.drift_rate_Alice
-	patterns_Alice[i] = t_stretched
+	timestamps_Alice[i] = t_stretched
 
 print('======== write events_Alice to outfile ========')
 print('len(timestamps_Alice), len(patterns_Alice)', len(timestamps_Alice), len(patterns_Alice))
-outfile_Alice ="./data/alice" + time + ".bin"
+outfile_Alice ="./data/alice_" + time + ".bin"
 helper.write(config.tau_res, outfile_Alice, list(zip(timestamps_Alice, patterns_Alice)))
+
 del timestamps_Alice
 del patterns_Alice
 
@@ -97,15 +103,20 @@ print('11. randomly select same or different bases for Bob, and assign detectors
 
 # indices with different bases (half of them)
 diff_indices = 	np.random.choice(len(patterns_Bob), int(0.5*len(patterns_Bob)), replace=False)
+
+# indices with different basis and |0> result
 diff_0_indices_indices = np.random.choice(len(diff_indices), int(0.5*len(diff_indices)), replace=False)
 diff_0_indices = np.take(diff_indices, diff_0_indices_indices)
-diff_1_indices = np.delete(diff_indices, diff_0_indices_indices)
-del diff_indices
 
 for i in range(len(diff_0_indices)):
-	patterns_Bob[i] = (bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 
+	patterns_Bob[diff_0_indices[i]] = int(bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 
+
+# indices with different basis and |1> result
+diff_1_indices = np.delete(diff_indices, diff_0_indices_indices)
 for i in range(len(diff_1_indices)):
-	patterns_Bob[i] = (bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 + 1
+	patterns_Bob[diff_1_indices[i]] = int(bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 + 1
+
+del diff_indices
 
 events_Bob = list(zip(timestamps_Bob, patterns_Bob))
 del timestamps_Bob
@@ -135,12 +146,14 @@ timestamps_Bob = [event[0] for event in events_Bob]
 patterns_Bob = [event[1] for event in events_Bob]
 del events_Bob
 for i in range(len(timestamps_Bob)):
-	t = patterns_Bob[i]
+	t = timestamps_Bob[i]
 	t_stretched = t*config.drift_Bob + t*t*config.drift_rate_Bob
-	patterns_Bob[i] = t_stretched
+	timestamps_Bob[i] = t_stretched
 
 print('========== write events_Bob to outfiles ==========')
 print('len(timestamps_Bob), len(patterns_Bob)', len(timestamps_Bob), len(patterns_Bob))
-outfile_Bob ="./data/bob" + time + ".bin"
-helper.write(config.tau_res, outfile_Bob, list(zip(timestamps_Bob, patterns_Bob)))
+outfile_Bob ="./data/bob_" + time + ".bin"
 
+helper.write(config.tau_res, outfile_Bob, list(zip(timestamps_Bob, patterns_Bob)))
+print(timestamps_Bob[0:100])
+print(patterns_Bob[0:100])
