@@ -133,3 +133,10 @@ for i in range(len(events_Bob)):
 	t = events_Bob[i][0]
 	t_stretched = t*config.drift_Bob + t*t*config.drift_rate_Bob
 	events_Bob[i][0] = t_stretched
+
+
+print('17. write events to outfiles')
+outfile_Alice ="./data/alice.bin"
+outfile_Bob ="./data/bob.bin"
+helper.write(config.tau_res, outfile_Alice, events_Alice)
+helper.write(config.tau_res, outfile_Bob, events_Bob)

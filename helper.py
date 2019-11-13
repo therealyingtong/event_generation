@@ -22,13 +22,23 @@ def parseSatellite(filenameTLE, filenameSavedPass):
 
 	return sat, loc, startTime
 
-def new_merge(a, b):
-    if len(a) < len(b):
-        b, a = a, b
-    c = np.empty(len(a) + len(b), dtype=a.dtype)
-    b_indices = np.arange(len(b)) + np.searchsorted(a, b)
-    a_indices = np.ones(len(c), dtype=bool)
-    a_indices[b_indices] = False
-    c[b_indices] = b
-    c[a_indices] = a
-    return c
+def write(tau_res, outfile, events_array):
+
+	# divide by timestamp resolution
+	timestamps_array = np.asarray([event[0] for event in events_array]) / tau_res
+
+	# 2 ^ detector_index
+	patterns_array = 2 ** np.asarray([event[1] for event in events_array]) 
+
+	# shift bits and force types
+	timestamps_array = timestamps_array.astype('uint64') << 15
+	patterns_array = patterns_array.astype('uint32')
+	timestamps_and_patterns = timestamps_array | patterns_array
+
+	new_data = np.zeros(shape=(len(timestamps_array),2)).astype('uint32')
+
+	new_data[:,0] = timestamps_and_patterns >> 32
+
+	new_data[:,1] = timestamps_and_patterns.astype('uint32') 
+
+	new_data.astype('uint32').tofile(outfile)
