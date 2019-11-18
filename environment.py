@@ -16,7 +16,7 @@ def transmission(transmission_loss, timestamps, patterns):
 	p_loss = 1 / (10**(transmission_loss/10))
 	lost_indices = np.random.choice(len(timestamps), int(p_loss*len(timestamps)), replace=False)
 
-	np.delete(timestamps, lost_indices)
-	np.delete(patterns, lost_indices)
+	timestamps = np.delete(timestamps, lost_indices)
+	patterns = np.delete(patterns, lost_indices)
 
 	return timestamps, patterns

@@ -42,3 +42,19 @@ def write(tau_res, outfile, events_array):
 	new_data[:,1] = timestamps_and_patterns.astype('uint32') 
 
 	new_data.astype('uint32').tofile(outfile)
+
+def read(filename):
+    """Reads raw timestamp into time and patterns vectors
+
+    :param filename: a python file object open in binary mode
+    :type filename: _io.BufferedReader
+    :returns: Two vectors: timestamps, corresponding pattern
+    :rtype: {numpy.ndarray(float), numpy.ndarray(uint32)}
+    """
+    with open(filename, 'rb') as f:
+        data = np.fromfile(file=f, dtype='<u4').reshape(-1, 2)
+        # cast to uint64!!!
+        t = ((np.uint64(data[:, 0]) << 17) + (data[:, 1] >> 15))# / 8. # time in nanoseconds. 
+        #t = ((np.uint64(data[:, 0]) << 17) + (data[:, 1] >> 15)) 
+        p = data[:, 1] & 0xf
+        return t, p

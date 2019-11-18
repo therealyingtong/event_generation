@@ -43,7 +43,9 @@ print('len(events_Alice)', len(events_Alice))
 # =================================================
 
 print('4. introduce dark counts and stray light (i.e. additional events) in `events_Alice` using `dark_Alice`')
-events_Alice = environment.dark_count(config.dark_Alice, config.n_detectors, config.duration, events_Alice)
+events_Alice = environment.dark_count(
+	config.dark_Alice, config.n_detectors, config.duration, events_Alice
+)
 print('len(events_Alice)', len(events_Alice))
 
 print('5. drop a fraction of events according to each detector efficiency')
@@ -74,9 +76,10 @@ for i in range(len(timestamps_Alice)):
 	timestamps_Alice[i] = t_stretched
 
 print('======== write events_Alice to outfile ========')
-print('len(timestamps_Alice), len(patterns_Alice)', len(timestamps_Alice), len(patterns_Alice))
 outfile_Alice ="./data/alice_" + time + ".bin"
-helper.write(config.tau_res, outfile_Alice, list(zip(timestamps_Alice, patterns_Alice)))
+helper.write(
+	config.tau_res, outfile_Alice, list(zip(timestamps_Alice, patterns_Alice))
+)
 
 del timestamps_Alice
 del patterns_Alice
@@ -90,7 +93,12 @@ timestamps_Bob = [event[0] for event in events_Bob]
 patterns_Bob = [event[1] for event in events_Bob]
 del events_Bob
 
-timestamps_Bob, patterns_Bob = environment.transmission(config.transmission_loss, timestamps_Bob, patterns_Bob)
+print('len(timestamps_Bob) before transmission loss', len(timestamps_Bob))
+timestamps_Bob, patterns_Bob = environment.transmission(
+	config.transmission_loss, timestamps_Bob, patterns_Bob
+)
+print('len(timestamps_Bob) after transmission loss', len(timestamps_Bob))
+
 
 print('10. introduce a Doppler shift on timestamps_Bob using the TLE and saved pass metadata')
 delay_list = doppler.calcDoppler(
@@ -124,11 +132,13 @@ del patterns_Bob
 
 print ('12. introduce dark counts and stray light (i.e. additional events) in `timestamps_Bob` using `dark_Bob`')
 events_Bob = environment.dark_count(config.dark_Bob, config.n_detectors, config.duration, events_Bob)
+print('len(events_Bob)', len(events_Bob))
 
 print('13. drop a fraction of events according to each detector efficiency')
 events_Bob = detector.efficiency(
 	config.eta_Bob, events_Bob
 )
+print('len(events_Bob)', len(events_Bob))
 
 print('14. add a delay according to each detector skew')
 events_Bob = detector.skew(
@@ -140,6 +150,7 @@ dead_indices = []
 events_Bob = detector.dead(
 	config.dead_Bob, events_Bob
 )
+print('len(events_Bob)', len(events_Bob))
 
 print('16. stretch and squeeze using drift_Bob and drift_rate_Bob')
 timestamps_Bob = [event[0] for event in events_Bob]
@@ -155,5 +166,4 @@ print('len(timestamps_Bob), len(patterns_Bob)', len(timestamps_Bob), len(pattern
 outfile_Bob ="./data/bob_" + time + ".bin"
 
 helper.write(config.tau_res, outfile_Bob, list(zip(timestamps_Bob, patterns_Bob)))
-print(timestamps_Bob[0:100])
-print(patterns_Bob[0:100])
+
