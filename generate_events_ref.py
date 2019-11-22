@@ -22,9 +22,9 @@ t = event_timestamps_s /0.125e-9
 
 t_u64 = t.astype('uint64')
 
-new_data = np.zeros(t_u64.shape,dtype='uint32')
-
 t_shifted = t_u64 <<15
+
+# new_data = np.zeros(t_u64.shape,dtype='uint32')
 
 t_timestamp_and_event = t_shifted | p.astype('uint64')
 
@@ -35,6 +35,8 @@ new_data =np.zeros(shape=(len(t),2)).astype('uint32')
 new_data[:,0] = t_timestamp_and_event >> 32
 
 new_data[:,1] = t_timestamp_and_event.astype('uint32') 
+
+print(new_data[0:50])
 
 new_data.astype('uint32').tofile(outfile)
 
@@ -56,10 +58,6 @@ def _data_extractor(filename):
         #t = ((np.uint64(data[:, 0]) << 17) + (data[:, 1] >> 15)) 
         p = data[:, 1] & 0xf
         return t, p
-
-
-# In[157]:
-
 
 #tt,pp = _data_extractor("sim_data/1million.bin")
 

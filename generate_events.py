@@ -13,7 +13,7 @@ from operator import add
 
 # modules in this project
 import config
-import helper
+import parser
 import dopplerShift as doppler
 import detector
 import environment
@@ -22,7 +22,7 @@ import environment
 time = str(int(time.time()))
 
 print('0. read satellite orbit info')
-sat, loc, startTime = helper.parseSatellite(config.TLE_path, config.saved_pass_path)
+sat, loc, startTime = parser.parseSatellite(config.TLE_path, config.saved_pass_path)
 
 print('1. create timestamps with Poissonian distribution for Alice')
 arr_times = np.random.exponential(1/config.gen_rate, size = int(config.duration * config.gen_rate) )
@@ -72,98 +72,101 @@ patterns_Alice = [event[1] for event in events_Alice]
 del events_Alice
 for i in range(len(timestamps_Alice)):
 	t = timestamps_Alice[i]
-	t_stretched = t*config.drift_Alice + t*t*config.drift_rate_Alice
+	t_stretched = t + t*config.drift_Alice + t*t*config.drift_rate_Alice
 	timestamps_Alice[i] = t_stretched
 
 print('======== write events_Alice to outfile ========')
 outfile_Alice ="./data/alice_" + time + ".bin"
-helper.write(
+parser.write(
 	config.tau_res, outfile_Alice, list(zip(timestamps_Alice, patterns_Alice))
 )
 
 del timestamps_Alice
 del patterns_Alice
 
-# =================================================
-# Bob
-# =================================================
+# # =================================================
+# # Bob
+# # =================================================
 
-print('9. drop a fraction of events in events_Bob according to transmission_loss')
-timestamps_Bob = [event[0] for event in events_Bob]
-patterns_Bob = [event[1] for event in events_Bob]
-del events_Bob
+# print('9. drop a fraction of events in events_Bob according to transmission_loss')
+# timestamps_Bob = [event[0] for event in events_Bob]
+# patterns_Bob = [event[1] for event in events_Bob]
+# del events_Bob
 
-print('len(timestamps_Bob) before transmission loss', len(timestamps_Bob))
-timestamps_Bob, patterns_Bob = environment.transmission(
-	config.transmission_loss, timestamps_Bob, patterns_Bob
-)
-print('len(timestamps_Bob) after transmission loss', len(timestamps_Bob))
+# # print('timestamps_Bob[0:50]', timestamps_Bob[0:50])
 
 
-print('10. introduce a Doppler shift on timestamps_Bob using the TLE and saved pass metadata')
-delay_list = doppler.calcDoppler(
-	sat, loc, startTime, timestamps_Bob, 1
-)
-timestamps_Bob = [sum(x) for x in zip(timestamps_Bob, delay_list)]
-del delay_list
+# print('len(timestamps_Bob) before transmission loss', len(timestamps_Bob))
+# timestamps_Bob, patterns_Bob = environment.transmission(
+# 	config.transmission_loss, timestamps_Bob, patterns_Bob
+# )
+# print('len(timestamps_Bob) after transmission loss', len(timestamps_Bob))
 
-print('11. randomly select same or different bases for Bob, and assign detectors')
 
-# indices with different bases (half of them)
-diff_indices = 	np.random.choice(len(patterns_Bob), int(0.5*len(patterns_Bob)), replace=False)
+# print('10. introduce a Doppler shift on timestamps_Bob using the TLE and saved pass metadata')
+# delay_list = doppler.calcDoppler(
+# 	sat, loc, startTime, timestamps_Bob, 1
+# )
+# timestamps_Bob = [sum(x) for x in zip(timestamps_Bob, delay_list)]
+# del delay_list
 
-# indices with different basis and |0> result
-diff_0_indices_indices = np.random.choice(len(diff_indices), int(0.5*len(diff_indices)), replace=False)
-diff_0_indices = np.take(diff_indices, diff_0_indices_indices)
+# print('11. randomly select same or different bases for Bob, and assign detectors')
 
-for i in range(len(diff_0_indices)):
-	patterns_Bob[diff_0_indices[i]] = int(bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 
+# # indices with different bases (half of them)
+# diff_indices = 	np.random.choice(len(patterns_Bob), int(0.5*len(patterns_Bob)), replace=False)
 
-# indices with different basis and |1> result
-diff_1_indices = np.delete(diff_indices, diff_0_indices_indices)
-for i in range(len(diff_1_indices)):
-	patterns_Bob[diff_1_indices[i]] = int(bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 + 1
+# # indices with different basis and |0> result
+# diff_0_indices_indices = np.random.choice(len(diff_indices), int(0.5*len(diff_indices)), replace=False)
+# diff_0_indices = np.take(diff_indices, diff_0_indices_indices)
 
-del diff_indices
+# for i in range(len(diff_0_indices)):
+# 	patterns_Bob[diff_0_indices[i]] = int(bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 
 
-events_Bob = list(zip(timestamps_Bob, patterns_Bob))
-del timestamps_Bob
-del patterns_Bob
+# # indices with different basis and |1> result
+# diff_1_indices = np.delete(diff_indices, diff_0_indices_indices)
+# for i in range(len(diff_1_indices)):
+# 	patterns_Bob[diff_1_indices[i]] = int(bool(np.floor(patterns_Bob[i] / 2) ) ^ bool(1))*2 + 1
 
-print ('12. introduce dark counts and stray light (i.e. additional events) in `timestamps_Bob` using `dark_Bob`')
-events_Bob = environment.dark_count(config.dark_Bob, config.n_detectors, config.duration, events_Bob)
-print('len(events_Bob)', len(events_Bob))
+# del diff_indices
 
-print('13. drop a fraction of events according to each detector efficiency')
-events_Bob = detector.efficiency(
-	config.eta_Bob, events_Bob
-)
-print('len(events_Bob)', len(events_Bob))
+# events_Bob = list(zip(timestamps_Bob, patterns_Bob))
+# del timestamps_Bob
+# del patterns_Bob
 
-print('14. add a delay according to each detector skew')
-events_Bob = detector.skew(
-	config.skew_Bob, events_Bob
-)
+# print ('12. introduce dark counts and stray light (i.e. additional events) in `timestamps_Bob` using `dark_Bob`')
+# events_Bob = environment.dark_count(config.dark_Bob, config.n_detectors, config.duration, events_Bob)
+# print('len(events_Bob)', len(events_Bob))
 
-print('15. for each detector, remove any timestamp that occurs less than dead_i after the previous event')
-dead_indices = []
-events_Bob = detector.dead(
-	config.dead_Bob, events_Bob
-)
-print('len(events_Bob)', len(events_Bob))
+# print('13. drop a fraction of events according to each detector efficiency')
+# events_Bob = detector.efficiency(
+# 	config.eta_Bob, events_Bob
+# )
+# print('len(events_Bob)', len(events_Bob))
 
-print('16. stretch and squeeze using drift_Bob and drift_rate_Bob')
-timestamps_Bob = [event[0] for event in events_Bob]
-patterns_Bob = [event[1] for event in events_Bob]
-del events_Bob
-for i in range(len(timestamps_Bob)):
-	t = timestamps_Bob[i]
-	t_stretched = t*config.drift_Bob + t*t*config.drift_rate_Bob
-	timestamps_Bob[i] = t_stretched
+# print('14. add a delay according to each detector skew')
+# events_Bob = detector.skew(
+# 	config.skew_Bob, events_Bob
+# )
 
-print('========== write events_Bob to outfiles ==========')
-print('len(timestamps_Bob), len(patterns_Bob)', len(timestamps_Bob), len(patterns_Bob))
-outfile_Bob ="./data/bob_" + time + ".bin"
+# print('15. for each detector, remove any timestamp that occurs less than dead_i after the previous event')
+# dead_indices = []
+# events_Bob = detector.dead(
+# 	config.dead_Bob, events_Bob
+# )
+# print('len(events_Bob)', len(events_Bob))
 
-helper.write(config.tau_res, outfile_Bob, list(zip(timestamps_Bob, patterns_Bob)))
+# print('16. stretch and squeeze using drift_Bob and drift_rate_Bob')
+# timestamps_Bob = [event[0] for event in events_Bob]
+# patterns_Bob = [event[1] for event in events_Bob]
+# del events_Bob
+# for i in range(len(timestamps_Bob)):
+# 	t = timestamps_Bob[i]
+# 	t_stretched = t + t*config.drift_Bob + t*t*config.drift_rate_Bob
+# 	timestamps_Bob[i] = t_stretched
+
+# print('========== write events_Bob to outfiles ==========')
+# print('len(timestamps_Bob), len(patterns_Bob)', len(timestamps_Bob), len(patterns_Bob))
+# outfile_Bob ="./data/bob_" + time + ".bin"
+
+# parser.write(config.tau_res, outfile_Bob, list(zip(timestamps_Bob, patterns_Bob)))
 

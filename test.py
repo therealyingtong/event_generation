@@ -1,19 +1,16 @@
 import numpy as np
-import helper
+import parser
 
-filename_Alice = "data/alice_1574045702.bin"
-filename_Bob = "data/bob_1574045702.bin"
+s = np.random.exponential(1e-6, size=int(1e6 *1.2 ) )
+dead_time_s = 150e-9
+dead_time_condition = s>dead_time_s
+good_events = np.extract(dead_time_condition,s)
+event_timestamps_s = np.cumsum(good_events)
+p = np.random.randint(0,4,size=len(event_timestamps_s))
+t = event_timestamps_s 
 
-timestamps_Alice, patterns_Alice = helper.read(filename_Alice)
-timestamps_Bob, patterns_Bob = helper.read(filename_Bob)
+print(t[0:100])
+print(p[0:100])
 
-filename_Alice_ref = "data/ALICE_12Apr_19_3"
-filename_Bob_ref = "data/BOB_12Apr_19_3"
-
-timestamps_Alice_ref, patterns_Alice_ref = helper.read(filename_Alice_ref)
-timestamps_Bob_ref, patterns_Bob_ref = helper.read(filename_Bob_ref)
-
-print('len(timestamps_Alice)', len(timestamps_Alice))
-print('len(timestamps_Alice_ref)', len(timestamps_Alice_ref))
-print('len(timestamps_Bob)', len(timestamps_Bob))
-print('len(timestamps_Bob_ref)', len(timestamps_Bob_ref))
+events = list(zip(t, p))
+parser.write(0.125e-9, './data/2million_test.bin', events)
