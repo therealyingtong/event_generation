@@ -7,7 +7,7 @@ def efficiency(eta_array, events_array):
 
 	dropped_indices = []
 	for i in range(len(eta_array)):
-		p_drop = eta_array[i]
+		p_drop = 1 - eta_array[i]
 		indices = np.where(np.asarray(patterns_array) == i)[0]
 		dropped_indices_indices = np.random.choice(len(indices), size = int(p_drop*len(indices)), replace=False).tolist()
 		dropped_indices = dropped_indices + np.asarray(indices).take(dropped_indices_indices).tolist()

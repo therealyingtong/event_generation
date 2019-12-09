@@ -1,0 +1,14 @@
+./TT06Dec_1M_4s
+chopper on bob readevent files
+at :./data/bob_1575870026.bin
+running:../qcrypto/remotecrypto/chopper -i ./data/bob_1575870026.bin -D ./TT06Dec_1M_4s/bob/t2 -d ./TT06Dec_1M_4s/bob/t3 -U
+Running in process:3673
+Timed out - killing3673
+Done
+chopper2 on Alice readevent files
+at :./data/alice_1575870026.bin
+../qcrypto/remotecrypto/chopper2 -i ./data/alice_1575870026.bin -D ./TT06Dec_1M_4s/alice/t1 -U 
+running pfind
+../qcrypto/remotecrypto/pfind -D ./TT06Dec_1M_4s/alice/t1 -e 0xaef40000 -d ./TT06Dec_1M_4s/bob/t2 -r 2 -n 10 -V 3 -q 22
+running costream
+../qcrypto/remotecrypto/costream -D ./TT06Dec_1M_4s/alice/t1 -d ./TT06Dec_1M_4s/bob/t2 -F ./TT06Dec_1M_4s/alice/t4 -f ./TT06Dec_1M_4s/alice/t3 -e 0xaef40000 -w 16 -u 40-p 1 -q 10 -t -1965472-T 0 -V 4 -G 3

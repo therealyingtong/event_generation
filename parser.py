@@ -26,11 +26,11 @@ def write(tau_res, outfile, events_array):
 
 	# divide by timestamp resolution
 	timestamps_array = np.asarray([event[0] for event in events_array]) / tau_res
-	print(timestamps_array[0:100])
+	# print(timestamps_array[0:100])
 
 	# 2 ^ detector_index
 	patterns_array = 2 ** np.asarray([event[1] for event in events_array]) 
-	print(patterns_array[0:100])
+	# print(patterns_array[0:100])
 
 	# shift bits and force types
 	timestamps_array = timestamps_array.astype('uint64') << 15
