@@ -1,7 +1,7 @@
 import os
 import subprocess
 import config
-
+import signal
 
 def create_data_folders(processed_data_root, folder_array):
     
@@ -30,18 +30,20 @@ def log(s, printlog = True):
 
 
 def run_sub_process(command, timelimit = 5):
-    log("running:"+ command)
-    
-    process = subprocess.Popen([command], shell=True)
-    try:
-        log('Running in process:'+str( process.pid))
-        #print('Running in process', process.pid)
-        process.wait(timeout=timelimit)
-    except subprocess.TimeoutExpired:
-        log('Timed out - killing '+ str(process.pid) )
-        #print('Timed out - killing', process.pid)
-        process.kill()
-    log("Done")
+	log("running:"+ command)
+
+	# process = subprocess.Popen([command], shell=True)
+	process = subprocess.Popen(command.split(), shell=False)
+
+	try:
+		log('Running in process:'+str( process.pid))
+		process.wait(timeout=timelimit)
+		# outs, errs = process.communicate(timeout=timelimit)
+	except subprocess.TimeoutExpired:
+		log('Timed out - killing '+ str(process.pid) )
+		process.kill()
+		# outs, errs = process.communicate()
+	log("Done")
 
 def chop_bob(bob_readevent_file, bob_t2, bob_t3_outcome, remotecrypto_folder):
     log("chopper on bob readevent files")
