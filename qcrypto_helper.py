@@ -2,7 +2,6 @@ import os
 import subprocess
 import config
 
-# log_file = None 
 
 def create_data_folders(processed_data_root, folder_array):
     
@@ -44,13 +43,13 @@ def run_sub_process(command, timelimit = 5):
         process.kill()
     log("Done")
 
-def chop_bob(bob_readevent_file, remotecrypto_folder, bob_t2, bob_t3_outcome):
+def chop_bob(bob_readevent_file, bob_t2, bob_t3_outcome, remotecrypto_folder):
     log("chopper on bob readevent files")
     log("at :"+ bob_readevent_file)
     chop_bob_command = remotecrypto_folder+"/chopper -i "+ bob_readevent_file+" -D "+ bob_t2 +" -d "+ bob_t3_outcome + " -U"
     run_sub_process(chop_bob_command)
 
-def chop2_alice(alice_readevent_file, remotecrypto_folder, alice_t1):
+def chop2_alice(alice_readevent_file, alice_t1, remotecrypto_folder):
     log("chopper2 on Alice readevent files")
     log("at :"+ alice_readevent_file)
     chop2_alice_command = remotecrypto_folder+"/chopper2 -i "+ alice_readevent_file+" -D " + alice_t1 + " -U "
@@ -60,7 +59,7 @@ def chop2_alice(alice_readevent_file, remotecrypto_folder, alice_t1):
     #print (chop2_alice_command)
 
 
-def p_find(epoch, numepochs, remotecrypto_folder, alice_t1, bob_t2):
+def p_find(epoch, numepochs, alice_t1, bob_t2, remotecrypto_folder):
     if "0x" not in epoch.lower():
         xepoch = "0x"+str(epoch)
     log ("running pfind")
@@ -69,7 +68,7 @@ def p_find(epoch, numepochs, remotecrypto_folder, alice_t1, bob_t2):
     log (pfind_command)
     os.system(pfind_command)
 
-def p_find_blurb(epoch, remotecrypto_folder, alice_t1, bob_t2):
+def p_find_blurb(epoch, alice_t1, bob_t2, remotecrypto_folder):
     if "0x" not in epoch.lower():
         xepoch = "0x"+str(epoch)
     log ("running pfind")
@@ -78,7 +77,7 @@ def p_find_blurb(epoch, remotecrypto_folder, alice_t1, bob_t2):
     log (pfindB_command)
     os.system(pfindB_command)
 
-def co_stream(epoch, t_diff ,epochnum, remotecrypto_folder, alice_t1, alice_t3, alice_t4, bob_t2):
+def co_stream(epoch, t_diff ,epochnum, alice_t1, alice_t3, alice_t4, bob_t2, remotecrypto_folder):
     if "0x" not in epoch.lower():
         xepoch = "0x"+str(epoch)
     log ("running costream")
@@ -87,6 +86,14 @@ def co_stream(epoch, t_diff ,epochnum, remotecrypto_folder, alice_t1, alice_t3, 
         + " -e " + str(xepoch) + " -w 16 -u 40-p 1 -q 10 -t " + str(t_diff) + "-T 0 -V 4 -G 3" + " -q " + str(epochnum)
     log(costream_command)
     os.system(costream_command)
+
+def splicer(bob_t3_outcome, alice_t4, bob_t5, bob_t3_rawkey, startepoch, epochnum, remotecrypto_folder):
+	if "0x" not in startepoch.lower():
+		xepoch = "0x"+str(startepoch)
+	log ("running splicer")
+	splicer_command = remotecrypto_folder + "/splicer -d " + bob_t3_outcome + " -D " + alice_t4 + " -B " + bob_t5 + " -f " + bob_t3_rawkey + " -e " + xepoch + " -q " + str(epochnum)
+	log(splicer_command)
+	os.system(splicer_command)
 
 def ecd2(errorcorrection_folder):
 	log("running ecd2")
