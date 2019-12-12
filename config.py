@@ -1,3 +1,4 @@
+
 # ================================================
 # SOURCE CONFIG
 # ================================================
@@ -39,7 +40,7 @@ n_detectors = 4 # number of detectors for EACH Alice and Bob
 # ENVIRONMENT CONFIG
 # ================================================
 # transmission_loss = 30 # transmission loss in dB
-# dark_Alice = 3000 # dark count rates for Alice in counts/s
+dark_Alice = 3000 # dark count rates for Alice in counts/s
 # dark_Bob = 3000 # dark count rates for Bob in counts/s
 
 # ================================================
@@ -47,7 +48,7 @@ n_detectors = 4 # number of detectors for EACH Alice and Bob
 # ================================================
 TLE_path = "./data/GALASSIA-TLE.txt"
 saved_pass_path = "./data/GALASSIA-15723-pass-48.txt"
-
+processed_data_root = "./" + str(int(gen_rate)) + "_" + str(int(duration))
 
 # ================================================
 # ZERO CONFIG

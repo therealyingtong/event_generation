@@ -76,7 +76,7 @@ for i in range(len(timestamps_Alice)):
 	timestamps_Alice[i] = t_stretched
 
 print('======== write events_Alice to outfile ========')
-outfile_Alice ="./data/alice_" + time + ".bin"
+outfile_Alice ="./data/alice_" + str(int(config.gen_rate)) + "_" + str(int(config.duration)) + ".bin"
 parser.write(
 	config.tau_res, outfile_Alice, list(zip(timestamps_Alice, patterns_Alice))
 )
@@ -166,7 +166,7 @@ for i in range(len(timestamps_Bob)):
 
 print('========== write events_Bob to outfiles ==========')
 print('len(timestamps_Bob), len(patterns_Bob)', len(timestamps_Bob), len(patterns_Bob))
-outfile_Bob ="./data/bob_" + time + ".bin"
+outfile_Bob ="./data/bob_" + str(int(config.gen_rate)) + "_" + str(int(config.duration)) + ".bin"
 
 parser.write(config.tau_res, outfile_Bob, list(zip(timestamps_Bob, patterns_Bob)))
 
