@@ -1,1 +1,0 @@
-../qcrypto/remotecrypto/splicer -d ./1000000_4/bob/t3_outcome -D ./1000000_4/alice/t4 -B ./1000000_4/bob/t5 -f ./1000000_4/bob/t3_rawkey -e 0xaf3c0001 -q 4
