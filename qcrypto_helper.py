@@ -60,6 +60,18 @@ def chop2_alice(alice_readevent_file, alice_t1, remotecrypto_folder):
     os.system(chop2_alice_command)
     #print (chop2_alice_command)
 
+def transferd(srcdir, commandpipe, target, destdir, notify, ec_in_pipe, ec_out_pipe, port,  remotecrypto_folder):
+	log("mkfifo " + commandpipe)
+	os.system("mkfifo " + commandpipe)
+	log("mkfifo " + ec_in_pipe)
+	os.system("mkfifo " + ec_in_pipe)
+	log("mkfifo " + ec_out_pipe)
+	os.system("mkfifo " + ec_out_pipe)
+	
+	transferd_command = remotecrypto_folder + "/transferd -d " + srcdir + " -c " + commandpipe + " -t " + target + " -D " + destdir + " -l " + notify + " -e " + ec_in_pipe + " -E " + ec_out_pipe + " -p " + port
+	log(transferd_command)
+	os.system(transferd_command)
+
 
 def p_find(epoch, numepochs, alice_t1, bob_t2, remotecrypto_folder):
     if "0x" not in epoch.lower():
@@ -97,8 +109,8 @@ def splicer(bob_t3_outcome, alice_t4, bob_t5, bob_t3_rawkey, startepoch, epochnu
 	log(splicer_command)
 	os.system(splicer_command)
 
-def ecd2(errorcorrection_folder):
+def ecd2(commandpipe, sendpipe, receivepipe, rawkey_dir, finalkey_dir, notificationpipe, querypipe, respondpipe, errorcorrection_folder):
 	log("running ecd2")
-	ecd2_command = errorcorrection_folder + "/ecd2 -c " + " -s " + " -r " + " -d " + " -f " + " -l " + " -Q " + " -q " 
+	ecd2_command = errorcorrection_folder + "/ecd2 -c " + commandpipe + " -s " + sendpipe + " -r " + receivepipe + " -d " + rawkey_dir + " -f " + finalkey_dir + " -l " + notificationpipe + " -Q " + querypipe + " -q " + respondpipe
 	log(ecd2_command)
 	os.system(ecd2_command)

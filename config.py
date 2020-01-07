@@ -49,6 +49,10 @@ dark_Alice = 3000 # dark count rates for Alice in counts/s
 TLE_path = "./data/GALASSIA-TLE.txt"
 saved_pass_path = "./data/GALASSIA-15723-pass-48.txt"
 processed_data_root = "./" + str(int(gen_rate)) + "_" + str(int(duration))
+alice_ip = "127.0.0.1"
+bob_ip = "127.0.0.1"
+alice_port = "4852"
+bob_port = "4853"
 
 # ================================================
 # ZERO CONFIG
