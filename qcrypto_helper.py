@@ -110,6 +110,19 @@ def splicer(bob_t3_outcome, alice_t4, bob_t5, bob_t3_rawkey, startepoch, epochnu
 	os.system(splicer_command)
 
 def ecd2(commandpipe, sendpipe, receivepipe, rawkey_dir, finalkey_dir, notificationpipe, querypipe, respondpipe, errorcorrection_folder):
+	log("mkfifo " + commandpipe)
+	os.system("mkfifo " + commandpipe)
+	log("mkfifo " + sendpipe)
+	os.system("mkfifo " + sendpipe)
+	log("mkfifo " + receivepipe)
+	os.system("mkfifo " + receivepipe)
+	log("mkfifo " + notificationpipe)
+	os.system("mkfifo " + notificationpipe)
+	log("mkfifo " + querypipe)
+	os.system("mkfifo " + querypipe)
+	log("mkfifo " + respondpipe)
+	os.system("mkfifo " + respondpipe)
+	
 	log("running ecd2")
 	ecd2_command = errorcorrection_folder + "/ecd2 -c " + commandpipe + " -s " + sendpipe + " -r " + receivepipe + " -d " + rawkey_dir + " -f " + finalkey_dir + " -l " + notificationpipe + " -Q " + querypipe + " -q " + respondpipe
 	log(ecd2_command)

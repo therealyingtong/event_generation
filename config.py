@@ -52,7 +52,7 @@ processed_data_root = "./" + str(int(gen_rate)) + "_" + str(int(duration))
 alice_ip = "127.0.0.1"
 bob_ip = "127.0.0.1"
 alice_port = "4852"
-bob_port = "4853"
+bob_port = "4855"
 
 # ================================================
 # ZERO CONFIG
