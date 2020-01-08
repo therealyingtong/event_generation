@@ -61,13 +61,15 @@ def chop2_alice(alice_readevent_file, alice_t1, remotecrypto_folder):
     #print (chop2_alice_command)
 
 def p_find(epoch, numepochs, alice_t1, bob_t2, remotecrypto_folder):
-    if "0x" not in epoch.lower():
-        xepoch = "0x"+str(epoch)
-    log ("\n running pfind\n ")
-    pfind_command = remotecrypto_folder + "/pfind -D " + alice_t1 + " -e "\
-        + str(xepoch)+ " -d " + bob_t2 + " -r 2 -n " + str(numepochs) + " -V 3 -q 22"
-    log (pfind_command)
-    os.system(pfind_command)
+	if "0x" not in epoch.lower():
+		xepoch = "0x"+str(epoch)
+	log ("\n running pfind\n ")
+	pfind_command = remotecrypto_folder + "/pfind -D " + alice_t1 + " -e "\
+		+ str(xepoch)+ " -d " + bob_t2 + " -r 2 -n " + str(numepochs) + " -V 3 -q 22"
+	log (pfind_command)
+	diff = subprocess.Popen(pfind_command.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	return iter(diff.stdout.readline, b'')
+	# os.system(pfind_command)
 
 def p_find_blurb(epoch, alice_t1, bob_t2, remotecrypto_folder):
     if "0x" not in epoch.lower():

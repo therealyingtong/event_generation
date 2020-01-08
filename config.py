@@ -3,8 +3,8 @@
 # SOURCE CONFIG
 # ================================================
 
-gen_rate = 1e6 # event generation rate in counts/second
-duration = 4 # duration of event generation in seconds
+gen_rate = 1e4 # event generation rate in counts/second
+duration = 40 # duration of event generation in seconds
 # stress testing: 300s
 # test: 5s
 n_detectors = 4 # number of detectors for EACH Alice and Bob
@@ -40,7 +40,7 @@ n_detectors = 4 # number of detectors for EACH Alice and Bob
 # ENVIRONMENT CONFIG
 # ================================================
 # transmission_loss = 30 # transmission loss in dB
-dark_Alice = 3000 # dark count rates for Alice in counts/s
+# dark_Alice = 3000 # dark count rates for Alice in counts/s
 # dark_Bob = 3000 # dark count rates for Bob in counts/s
 
 # ================================================
