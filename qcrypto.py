@@ -78,51 +78,59 @@ qcrypto_helper.transferd(
 	alice_folder, alice_command, bob_ip, bob_folder, alice_transferd_log, alice_ec_in, alice_ec_out, alice_port, remotecrypto_folder
 )
 
-fork1 = os.fork()
+# fork1 = os.fork()
 
-if fork1 == 0:
+# if fork1 == 0:
+if True:
+
+	# print("=============fork1=============")
 
 	qcrypto_helper.transferd(
 		bob_folder, bob_command, alice_ip, bob_folder, bob_transferd_log, bob_ec_in, bob_ec_out, bob_port, remotecrypto_folder
 	)
 
-fork2 = os.fork()
+	# fork2 = os.fork()
 
-if fork2 == 0:
-	# ecd2 Alice
-	alice_first_epoch = str(os.listdir(alice_t3)[0])
-	alice_num_blocks = len(os.listdir(alice_t3)) - 2
-	alice_ec_commandpipe = "alice_ec_commandpipe"
+	# if fork2 == 0:
 
-	command = "echo '" + str(alice_first_epoch) + " " + str(alice_num_blocks) + "\n' > " + alice_ec_commandpipe
+	if True:
+		# print("=============fork2=============")
+		# ecd2 Alice
+		alice_first_epoch = str(os.listdir(alice_t3)[0])
+		alice_num_blocks = len(os.listdir(alice_t3)) - 2
+		alice_ec_commandpipe = "alice_ec_commandpipe"
 
-	sendpipe = alice_ec_in
-	receivepipe = alice_ec_out
-	rawkeydirectory = alice_t3
-	finalkeydirectory = alice_t7
-	notificationpipe = "alice_notif"
-	querypipe = "alice_query"
-	respondpipe = "alice_respond"
+		command = "echo '" + str(alice_first_epoch) + " " + str(alice_num_blocks) + "\n' > " + alice_ec_commandpipe
 
-	qcrypto_helper.ecd2(alice_ec_commandpipe, sendpipe, receivepipe, rawkeydirectory, finalkeydirectory, notificationpipe, querypipe, respondpipe, errorcorrection_folder)
+		sendpipe = alice_ec_in
+		receivepipe = alice_ec_out
+		rawkeydirectory = alice_t3
+		finalkeydirectory = alice_t7
+		notificationpipe = "alice_notif"
+		querypipe = "alice_query"
+		respondpipe = "alice_respond"
 
-fork3 = os.fork()
+		qcrypto_helper.ecd2(alice_ec_commandpipe, sendpipe, receivepipe, rawkeydirectory, finalkeydirectory, notificationpipe, querypipe, respondpipe, errorcorrection_folder)
 
-if fork3 == 0:
-	# ecd2 Bob
-	bob_first_epoch = str(os.listdir(bob_t3_rawkey)[0])
-	bob_num_blocks = len(os.listdir(bob_t3_rawkey)) - 2
-	bob_ec_commandpipe = "bob_ec_commandpipe"
+		# fork3 = os.fork()
 
-	command = "echo '" + str(bob_first_epoch) + " " + str(bob_num_blocks) + "\n' > " + bob_ec_commandpipe
+		# if fork3 == 0:
+		if True:
+			# print("=============fork3=============")
+			# ecd2 Bob
+			bob_first_epoch = str(os.listdir(bob_t3_rawkey)[0])
+			bob_num_blocks = len(os.listdir(bob_t3_rawkey)) - 2
+			bob_ec_commandpipe = "bob_ec_commandpipe"
 
-	sendpipe = bob_ec_in
-	receivepipe = bob_ec_out
-	rawkeydirectory = bob_t3_rawkey
-	finalkeydirectory = bob_t7
-	notificationpipe = "bob_notif"
-	querypipe = "bob_query"
-	respondpipe = "bob_respond"
+			command = "echo '" + str(bob_first_epoch) + " " + str(bob_num_blocks) + "\n' > " + bob_ec_commandpipe
 
-	qcrypto_helper.ecd2(bob_ec_commandpipe, sendpipe, receivepipe, rawkeydirectory, finalkeydirectory, notificationpipe, querypipe, respondpipe, errorcorrection_folder)
+			sendpipe = bob_ec_in
+			receivepipe = bob_ec_out
+			rawkeydirectory = bob_t3_rawkey
+			finalkeydirectory = bob_t7
+			notificationpipe = "bob_notif"
+			querypipe = "bob_query"
+			respondpipe = "bob_respond"
+
+			qcrypto_helper.ecd2(bob_ec_commandpipe, sendpipe, receivepipe, rawkeydirectory, finalkeydirectory, notificationpipe, querypipe, respondpipe, errorcorrection_folder)
 
