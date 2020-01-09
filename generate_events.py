@@ -4,6 +4,7 @@
 # garbage collector for unused variables
 import gc
 gc.collect()
+import sys
 
 # python libraries
 import numpy as np
@@ -11,8 +12,12 @@ from matplotlib import pyplot as plt
 import time
 from operator import add 
 
+zeroConfig = sys.argv[1]
+if zeroConfig:
+	import zero_config as config
+else:
+	import config
 # modules in this project
-import config
 import parser
 import dopplerShift as doppler
 import detector
@@ -102,13 +107,13 @@ timestamps_Bob, patterns_Bob = environment.transmission(
 )
 print('len(timestamps_Bob) after transmission loss', len(timestamps_Bob))
 
-
-print('10. introduce a Doppler shift on timestamps_Bob using the TLE and saved pass metadata')
-delay_list = doppler.calcDoppler(
-	sat, loc, startTime, timestamps_Bob, 1
-)
-timestamps_Bob = [sum(x) for x in zip(timestamps_Bob, delay_list)]
-del delay_list
+if config.doppler:
+	print('10. introduce a Doppler shift on timestamps_Bob using the TLE and saved pass metadata')
+	delay_list = doppler.calcDoppler(
+		sat, loc, startTime, timestamps_Bob, 1
+	)
+	timestamps_Bob = [sum(x) for x in zip(timestamps_Bob, delay_list)]
+	del delay_list
 
 print('11. randomly select same or different bases for Bob, and assign detectors')
 

@@ -86,7 +86,7 @@ def co_stream(epoch, t_diff ,epochnum, alice_t1, alice_t3, alice_t4, bob_t2, rem
     log ("\n running costream\n ")
     costream_command = remotecrypto_folder+"/costream -D "+alice_t1 \
         + " -d "+ bob_t2 + " -F " + alice_t4+" -f " + alice_t3 \
-        + " -e " + str(xepoch) + " -w 16 -u 40-p 1 -q 10 -t " + str(t_diff) + "-T 0 -V 4 -G 3" + " -q " + str(epochnum)
+        + " -e " + str(xepoch) + " -w 16 -u 40 -p 1 -q 10 -t " + str(t_diff) + "-T 0 -V 4 -G 3" + " -q " + str(epochnum)
     log(costream_command)
     os.system(costream_command)
 
